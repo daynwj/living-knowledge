@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dayn Johnson — Living Knowledge</title>
+<meta name="description" content="How Dayn Johnson moved his Claude projects off static knowledge files and onto Notion databases that every project reads and Claude keeps current.">
+<meta property="og:title" content="Every project reads the same source now">
+<meta property="og:description" content="Moving my Claude projects off static knowledge files and onto Notion databases that Claude keeps current.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://daynwj.github.io/living-knowledge">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --rosso:#E10600;
+    --rosso-deep:#B0050A;
+    --blue:#0033A0;
+    --ink:#14161A;
+    --mute:#5B6066;
+    --line:#E4E6EA;
+    --paper:#FFFFFF;
+    --backdrop:#EEF0F3;
+    color-scheme:light;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;}
+  body{
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    color:var(--ink);
+    background:var(--backdrop);
+    line-height:1.5;
+    padding:30px 16px 60px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .page{
+    width:100%;max-width:1000px;margin:0 auto;
+    background:var(--paper);
+    box-shadow:0 24px 60px -28px rgba(20,22,26,.45);
+  }
+  a:focus-visible,button:focus-visible{outline:3px solid var(--rosso);outline-offset:2px;}
+
+  .backbar{
+    padding:14px 58px;border-bottom:1px solid var(--line);
+    font-family:'JetBrains Mono',monospace;font-size:12px;
+  }
+  .backbar a{color:var(--blue);text-decoration:none;font-weight:500;}
+  .backbar a:hover{color:var(--rosso-deep);}
+
+  .header{position:relative;padding:52px 58px 42px;border-bottom:1px solid var(--ink);}
+  .header::before{content:"";position:absolute;left:0;top:52px;bottom:42px;width:7px;background:var(--rosso);}
+  .name{
+    font-family:'Space Grotesk',sans-serif;font-weight:700;
+    font-size:44px;letter-spacing:-1.3px;line-height:1;
+  }
+  .name .dot{color:var(--rosso);}
+  .thesis{
+    font-family:'Space Grotesk',sans-serif;font-weight:600;
+    font-size:34px;line-height:1.18;letter-spacing:-.7px;
+    margin-top:26px;max-width:19ch;
+  }
+  .standfirst{
+    font-size:16.5px;line-height:1.64;color:#2b2e33;
+    margin-top:20px;max-width:62ch;
+  }
+  .links{
+    display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:28px;
+    font-family:'JetBrains Mono',monospace;font-size:12px;
+  }
+  .links a{color:var(--mute);text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:2px;}
+  .links a:hover{color:var(--rosso-deep);border-bottom-color:var(--rosso-deep);}
+
+  main{padding:0 58px 58px;}
+  section{padding-top:54px;}
+  section + section{border-top:1px solid var(--line);margin-top:54px;padding-top:54px;}
+
+  .sectlabel{
+    font-family:'JetBrains Mono',monospace;font-size:11px;
+    letter-spacing:.09em;color:var(--rosso-deep);font-weight:700;
+    margin-bottom:16px;
+  }
+  h2{
+    font-family:'Space Grotesk',sans-serif;font-weight:700;
+    font-size:29px;line-height:1.18;letter-spacing:-.6px;
+    max-width:25ch;margin-bottom:20px;
+  }
+  .prose p{font-size:16px;line-height:1.7;color:#2b2e33;max-width:68ch;}
+  .prose p + p{margin-top:15px;}
+  .prose a{color:var(--blue);text-decoration:none;border-bottom:1.5px solid rgba(0,51,160,.3);}
+  .prose a:hover{border-bottom-color:var(--blue);}
+
+  figure{margin:34px 0 0;}
+  figure svg{width:100%;height:auto;display:block;border:1px solid var(--line);}
+  figure + .prose{margin-top:30px;}
+
+  .deep{margin-top:20px;font-size:14.5px;}
+  .deep a{color:var(--blue);font-weight:600;text-decoration:none;border-bottom:1.5px solid rgba(0,51,160,.3);}
+  .deep a:hover{border-bottom-color:var(--blue);}
+  .receipt{
+    margin-top:30px;border-left:5px solid var(--rosso);
+    background:rgba(225,6,0,.05);padding:16px 20px;
+    font-size:15px;line-height:1.6;color:var(--ink);
+    max-width:64ch;
+  }
+
+  .close{background:var(--blue);color:#fff;padding:50px 58px 54px;}
+  .close h2{color:#fff;max-width:26ch;}
+  .close p{font-size:16.5px;line-height:1.7;color:rgba(255,255,255,.84);max-width:64ch;}
+  .close p + p{margin-top:15px;}
+  .close a{color:#fff;text-decoration:none;border-bottom:1.5px solid rgba(255,255,255,.45);}
+  .close a:hover{border-bottom-color:#fff;}
+  .nextlinks{margin-top:30px;display:flex;flex-wrap:wrap;gap:12px;}
+  .nextlinks a{
+    display:inline-block;border:1px solid rgba(255,255,255,.35);border-bottom:1px solid rgba(255,255,255,.35);
+    padding:11px 16px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;
+  }
+  .nextlinks a:hover{background:#fff;color:var(--blue);}
+
+  .foot{
+    padding:26px 58px 30px;border-top:1px solid var(--line);
+    font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--mute);
+    display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  }
+  .foot a{color:var(--mute);}
+
+  @media(max-width:680px){
+    body{padding:14px 10px 40px;}
+    .backbar{padding:12px 22px;}
+    .header{padding:34px 22px 28px;}
+    .header::before{top:34px;bottom:28px;width:6px;}
+    .name{font-size:33px;}
+    .thesis{font-size:25px;max-width:none;}
+    main{padding:0 22px 40px;}
+    h2{font-size:23px;}
+    .close{padding:34px 22px 38px;}
+    .foot{padding:22px;}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="backbar"><a href="https://daynwj.github.io/ai">← Back to AI practice</a></div>
+
+  <header class="header">
+    <div class="name">Dayn Johnson<span class="dot">.</span></div>
+    <h1 class="thesis">Every project reads the same source now.</h1>
+    <p class="standfirst">Until this summer, each of my Claude projects kept its own copy of what it knew. Now they all read from one set of Notion databases, and Claude keeps those databases current so I don't have to.</p>
+    <div class="links">
+      <a href="https://daynwj.github.io/ai">AI practice</a>
+      <a href="https://daynwj.github.io/resume">Resume</a>
+      <a href="https://linkedin.com/in/daynjohnson">LinkedIn</a>
+      <a href="mailto:daynwj@gmail.com">daynwj@gmail.com</a>
+    </div>
+  </header>
+
+  <main>
+
+    <section>
+      <div class="sectlabel">Before</div>
+      <h2>Every project had its own copy, and the copies disagreed.</h2>
+      <div class="prose">
+        <p>Each Claude project had its own knowledge files: markdown I wrote, uploaded, and was supposed to keep current. The same fact lived in three or four places. When something changed, I had to remember every project that knew it, and I usually didn't. One project would know something different about a topic than the next one, and each answered confidently from whatever version it had.</p>
+        <p>Putting those facts in my personal preferences wasn't the answer either. Preferences load on every message, in every project, so anything in there gets applied where nobody asked for it (the same cast-iron-and-Destiny problem from my Gemini days, told on <a href="https://daynwj.github.io/ai">my AI practice page</a>).</p>
+        <p>I'd also been here before with Notion itself. I used it years ago and spent hours building and maintaining databases by hand. Then I stopped, and all of it went stale. I still have pages of it to clear out.</p>
+      </div>
+
+      <figure><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 500" width="1000" height="500" font-family="Inter, system-ui, -apple-system, sans-serif" role="img" aria-label="Before: four projects each holding their own out-of-sync copy of the same facts. Now: four projects reading from and writing to one Notion source.">
+  <rect width="1000" height="500" fill="#FFFFFF"/>
+  <line x1="500" y1="40" x2="500" y2="460" stroke="#E4E6EA" stroke-width="1.5"/>
+
+  <text x="60" y="62" font-size="11" font-weight="700" fill="#5B6066" letter-spacing="0.6">BEFORE</text>
+  <text x="60" y="88" font-size="17" font-weight="700" fill="#14161A">Every project kept its own copy</text>
+
+  <g>
+    <rect x="60" y="120" width="180" height="120" fill="#FFFFFF" stroke="#14161A" stroke-width="1.2"/>
+    <text x="78" y="150" font-size="14" font-weight="700" fill="#14161A">Career</text>
+    <rect x="78" y="166" width="144" height="54" fill="#F4F5F7" stroke="#E4E6EA"/>
+    <text x="90" y="189" font-size="12" fill="#5B6066">Knowledge files</text>
+    <text x="90" y="208" font-size="12" font-weight="600" fill="#B0050A">updated in May</text>
+
+    <rect x="270" y="120" width="180" height="120" fill="#FFFFFF" stroke="#14161A" stroke-width="1.2"/>
+    <text x="288" y="150" font-size="14" font-weight="700" fill="#14161A">Household</text>
+    <rect x="288" y="166" width="144" height="54" fill="#F4F5F7" stroke="#E4E6EA"/>
+    <text x="300" y="189" font-size="12" fill="#5B6066">Knowledge files</text>
+    <text x="300" y="208" font-size="12" font-weight="600" fill="#B0050A">updated in July</text>
+
+    <rect x="60" y="264" width="180" height="120" fill="#FFFFFF" stroke="#14161A" stroke-width="1.2"/>
+    <text x="78" y="294" font-size="14" font-weight="700" fill="#14161A">Kitchen</text>
+    <rect x="78" y="310" width="144" height="54" fill="#F4F5F7" stroke="#E4E6EA"/>
+    <text x="90" y="333" font-size="12" fill="#5B6066">Knowledge files</text>
+    <text x="90" y="352" font-size="12" font-weight="600" fill="#B0050A">never updated</text>
+
+    <rect x="270" y="264" width="180" height="120" fill="#FFFFFF" stroke="#14161A" stroke-width="1.2"/>
+    <text x="288" y="294" font-size="14" font-weight="700" fill="#14161A">Hobbies</text>
+    <rect x="288" y="310" width="144" height="54" fill="#F4F5F7" stroke="#E4E6EA"/>
+    <text x="300" y="333" font-size="12" fill="#5B6066">Knowledge files</text>
+    <text x="300" y="352" font-size="12" font-weight="600" fill="#B0050A">updated in June</text>
+  </g>
+  <text x="60" y="424" font-size="12.4" fill="#5B6066">
+    <tspan x="60" dy="0">The same facts in four places. I updated each</tspan>
+    <tspan x="60" dy="19">copy by hand, when I remembered.</tspan>
+  </text>
+
+  <text x="550" y="62" font-size="11" font-weight="700" fill="#E10600" letter-spacing="0.6">NOW</text>
+  <text x="550" y="88" font-size="17" font-weight="700" fill="#14161A">One source, read and written by Claude</text>
+
+  <rect x="660" y="210" width="200" height="84" fill="#E10600"/>
+  <text x="760" y="245" text-anchor="middle" font-size="16" font-weight="700" fill="#FFFFFF">Notion</text>
+  <text x="760" y="268" text-anchor="middle" font-size="12" fill="#FFFFFF">Hubs and databases</text>
+
+  <g font-size="13" font-weight="700" fill="#FFFFFF">
+    <rect x="550" y="120" width="140" height="44" fill="#0033A0"/>
+    <text x="620" y="147" text-anchor="middle">Career</text>
+    <rect x="830" y="120" width="140" height="44" fill="#0033A0"/>
+    <text x="900" y="147" text-anchor="middle">Household</text>
+    <rect x="550" y="340" width="140" height="44" fill="#0033A0"/>
+    <text x="620" y="367" text-anchor="middle">Kitchen</text>
+    <rect x="830" y="340" width="140" height="44" fill="#0033A0"/>
+    <text x="900" y="367" text-anchor="middle">Hobbies</text>
+  </g>
+  <g stroke="#14161A" stroke-width="1.4" fill="none">
+    <line x1="640" y1="166" x2="700" y2="206"/>
+    <line x1="880" y1="166" x2="820" y2="206"/>
+    <line x1="640" y1="338" x2="700" y2="298"/>
+    <line x1="880" y1="338" x2="820" y2="298"/>
+  </g>
+  <g fill="#14161A">
+    <circle cx="640" cy="166" r="3"/><circle cx="700" cy="206" r="3"/>
+    <circle cx="880" cy="166" r="3"/><circle cx="820" cy="206" r="3"/>
+    <circle cx="640" cy="338" r="3"/><circle cx="700" cy="298" r="3"/>
+    <circle cx="880" cy="338" r="3"/><circle cx="820" cy="298" r="3"/>
+  </g>
+  <text x="550" y="424" font-size="12.4" fill="#5B6066">
+    <tspan x="550" dy="0">Every project reads the same rows. When something</tspan>
+    <tspan x="550" dy="19">changes, Claude updates the row once.</tspan>
+  </text>
+</svg></figure>
+    </section>
+
+    <section>
+      <div class="sectlabel">What changed</div>
+      <h2>Claude writes to Notion. I don't.</h2>
+      <div class="prose">
+        <p>In late July and early August 2026, I stood up a new project knowing I didn't want to keep updating markdown files in it. So instead of attaching knowledge files, I had Claude design databases in Notion and point the project at them. Then I did the same for the next project, and the one after that.</p>
+        <p>What makes it work is that I'm not the one maintaining it. When something changes, I say so in conversation and Claude updates the row. Claude reads from it, builds a new database when a project needs one, and marks a page as history when its job is done instead of deleting it. The rules for how it writes live on the hub pages themselves: check for a duplicate before creating a row, update a row instead of adding a second one, and tag the person instead of typing their name.</p>
+        <p>Because Claude designed the databases, they're related in ways I never bothered to build by hand. People is the spine. Trips, celebrations, activities, and more all tag against it, so a person flows through everything connected to them, and Claude can follow that thread across all of it.</p>
+        <p>Recipes were the proof. They used to live in a separate app, with a Gemini gem that forgot every good dish the moment the chat ended. Now they're a Notion database. My Digital Sous Chef project pulls from it, and when we build a new recipe together and I like it, I ask and it goes into the library as a new recipe. I don't lift a finger.</p>
+      </div>
+      <p class="deep"><a href="https://daynwj.github.io/design-time-logic">How my meal-planning system moved everything out of the instructions →</a></p>
+    </section>
+
+    <section>
+      <div class="sectlabel">The map</div>
+      <h2>What's in it, and how it connects.</h2>
+      <div class="prose">
+        <p>Two hubs, a manifest, and the databases hanging off them. This is the version I'm comfortable showing. The parts that hold money, health, and my kids' day-to-day stay off this page.</p>
+      </div>
+
+      <figure><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" width="1000" height="600" font-family="Inter, system-ui, -apple-system, sans-serif" role="img" aria-label="Map of the living knowledge system: me and Claude at the center, connected to the manifest, the household hub, the kitchen, the private hub, hobbies, and what writes back.">
+  <rect width="1000" height="600" fill="#FFFFFF"/>
+
+  <g stroke="#9AA1AA" stroke-width="1.4" fill="none">
+    <line x1="400" y1="270" x2="320" y2="130"/>
+    <line x1="400" y1="290" x2="320" y2="290"/>
+    <line x1="400" y1="310" x2="320" y2="450"/>
+    <line x1="600" y1="270" x2="680" y2="130"/>
+    <line x1="600" y1="290" x2="680" y2="290"/>
+    <line x1="600" y1="310" x2="680" y2="450"/>
+  </g>
+
+  <rect x="400" y="230" width="200" height="120" fill="#E10600"/>
+  <text x="500" y="276" text-anchor="middle" font-size="18" font-weight="700" fill="#FFFFFF">Me and Claude</text>
+  <text x="500" y="302" text-anchor="middle" font-size="12.4" fill="#FFFFFF">One living source</text>
+  <text x="500" y="321" text-anchor="middle" font-size="12.4" fill="#FFFFFF">every project reads</text>
+
+  <g>
+    <rect x="60" y="70" width="260" height="120" fill="#EEF2FA" stroke="#0033A0" stroke-width="1.2"/>
+    <text x="80" y="100" font-size="15" font-weight="700" fill="#0033A0">The manifest</text>
+    <text x="80" y="126" font-size="12.4" fill="#2b2e33">Every project and skill</text>
+    <text x="80" y="148" font-size="12.4" fill="#2b2e33">Ideas not yet built</text>
+    <text x="80" y="170" font-size="12.4" fill="#2b2e33">Where each page lives</text>
+
+    <rect x="60" y="230" width="260" height="120" fill="#EEF2FA" stroke="#0033A0" stroke-width="1.2"/>
+    <text x="80" y="260" font-size="15" font-weight="700" fill="#0033A0">Household hub</text>
+    <text x="80" y="286" font-size="12.4" fill="#2b2e33">People, the spine</text>
+    <text x="80" y="308" font-size="12.4" fill="#2b2e33">Trips, activities, celebrations</text>
+    <text x="80" y="330" font-size="12.4" fill="#2b2e33">Home and subscriptions</text>
+
+    <rect x="60" y="390" width="260" height="120" fill="#EEF2FA" stroke="#0033A0" stroke-width="1.2"/>
+    <text x="80" y="420" font-size="15" font-weight="700" fill="#0033A0">Kitchen</text>
+    <text x="80" y="446" font-size="12.4" fill="#2b2e33">Recipes and cook log</text>
+    <text x="80" y="468" font-size="12.4" fill="#2b2e33">Pantry and food profile</text>
+    <text x="80" y="490" font-size="12.4" fill="#2b2e33">Kitchen reference</text>
+
+    <rect x="680" y="70" width="260" height="120" fill="#FFF3F2" stroke="#E10600" stroke-width="1.6"/>
+    <text x="700" y="100" font-size="15" font-weight="700" fill="#B0050A">Private hub</text>
+    <text x="700" y="126" font-size="12.4" fill="#2b2e33">Professional record</text>
+    <text x="700" y="148" font-size="12.4" fill="#2b2e33">AI enablement playbook</text>
+    <text x="700" y="170" font-size="12.4" fill="#2b2e33">Accuracy guardrails</text>
+
+    <rect x="680" y="230" width="260" height="120" fill="#EEF2FA" stroke="#0033A0" stroke-width="1.2"/>
+    <text x="700" y="260" font-size="15" font-weight="700" fill="#0033A0">Hobbies</text>
+    <text x="700" y="286" font-size="12.4" fill="#2b2e33">Card and tabletop games</text>
+    <text x="700" y="308" font-size="12.4" fill="#2b2e33">Video game builds</text>
+    <text x="700" y="330" font-size="12.4" fill="#2b2e33">Rules references</text>
+
+    <rect x="680" y="390" width="260" height="120" fill="#EEF2FA" stroke="#0033A0" stroke-width="1.2"/>
+    <text x="700" y="420" font-size="15" font-weight="700" fill="#0033A0">What writes back</text>
+    <text x="700" y="446" font-size="12.4" fill="#2b2e33">School updates, by a skill</text>
+    <text x="700" y="468" font-size="12.4" fill="#2b2e33">Recipes, when I ask</text>
+    <text x="700" y="490" font-size="12.4" fill="#2b2e33">A duplicate check first</text>
+  </g>
+
+  <rect x="60" y="548" width="14" height="14" fill="#EEF2FA" stroke="#0033A0" stroke-width="1.2"/>
+  <text x="84" y="560" font-size="12" fill="#5B6066">Shared with the household</text>
+  <rect x="290" y="548" width="14" height="14" fill="#FFF3F2" stroke="#E10600" stroke-width="1.6"/>
+  <text x="314" y="560" font-size="12" fill="#5B6066">Private to me</text>
+</svg></figure>
+
+      <div class="prose">
+        <p>The manifest is the part most people would skip. It's one database listing every Claude project and skill I run, what each one owns, and which Notion pages it reads, with a separate queue for ideas that haven't been built yet. When I need to know whether something exists, I ask the manifest instead of my memory.</p>
+        <p>One source still drifts if nobody checks it. While I was building this page, Claude read the household hub and found it still describing Digital Sous Chef as an idea that hadn't been built, while the manifest had it as active. It took one edit in one place to fix. Before, I'd have had to hunt down every project that believed the old version.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="sectlabel">Permissioning</div>
+      <h2>Two hubs, because not every project should read everything.</h2>
+      <div class="prose">
+        <p>The first version was one shared hub. It holds household logistics – schedules, trips, subscriptions, celebrations – and my wife and I share it, along with every household project. Then I started putting career material in Notion, and some of it had no business sitting where every household project could read it. So there's a second, private hub for professional work and anything else that's mine alone.</p>
+        <p>The honest limit is written on the private hub itself. The Notion connector reads whatever my account can see, with no per-project scoping. Putting a page on the private hub keeps it away from other people, and it does nothing to keep it away from other Claude projects. Anything that truly can't be read everywhere needs real Notion permissions, not a different parent page.</p>
+        <p>It's the same lesson as the permissioning work on <a href="https://daynwj.github.io/ai">my AI practice page</a>: what the tool can reach decides what you can build, so find that out before you design around it.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="sectlabel">The same pattern at work</div>
+      <h2>At Henry Schein One, the same idea runs on SharePoint.</h2>
+      <div class="prose">
+        <p>I pitched Notion as the CS Ops knowledge system and lost, so I built it in SharePoint with licenses the org already had. The SOPs sat in an Excel list that only premium Copilot users could search, inside an ungoverned document library. I restructured the CS SharePoint site into governed libraries (enablement guides, infographics, and Office files in one, team call recordings in another) plus a list of external-facing product links, and kept the structure flat with heavy metadata.</p>
+        <p>The agent on top of it is grounded only in those sources. A CSM asks Copilot a question and gets leadership-approved steps with a link to the source document, or a content request form when no SOP exists yet. It can't see account data, so CSMs paste that in by hand, and that part still feels half rolled out.</p>
+        <p>The two builds teach each other. What I learn at home about keeping one source current shows up at work, and what work forces on me – governance, permissions, a form for the gaps – comes back home.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="close">
+    <h2>What this gives me back.</h2>
+    <p>This week I listened to an episode of <a href="https://podcasts.apple.com/us/podcast/un-churned-the-no-1-podcast-for-customer-retention/id1635997357?i=1000791305799">Unchurned</a>, with Josh Schachter at Notion's New York office talking to Christina Parra, Ariel Rissman, and Kelly Wooden from Notion's Outcomes Architects team. It described what I've been building this summer almost step for step.</p>
+    <p>Christina walked through the maturity model they use with customers: AI as a thought partner, then a personal assistant working from your context, then a teammate, and finally AI as the system. She also talked about using Notion to handle the administrative load at home so she can be more present with her family.</p>
+    <p>That's the arc on my AI practice page, and this knowledge base is how I got from the third step to the fourth. Claude took over the admin work of keeping it all straight. I keep the judgment, and I get more time with my family.</p>
+    <div class="nextlinks">
+      <a href="https://daynwj.github.io/ai">AI practice</a>
+      <a href="https://daynwj.github.io/design-time-logic">Digital Sous Chef</a>
+      <a href="https://daynwj.github.io/resume">Resume</a>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>Dayn Johnson · Charlotte, NC</span>
+    <span><a href="https://daynwj.github.io/resume">Resume</a> · <a href="https://linkedin.com/in/daynjohnson">LinkedIn</a> · <a href="mailto:daynwj@gmail.com">daynwj@gmail.com</a></span>
+  </div>
+
+</div>
+</body>
+</html>
