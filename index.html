@@ -1,369 +1,316 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dayn Johnson — Living Knowledge</title>
-<meta name="description" content="How Dayn Johnson moved his Claude projects off static knowledge files and onto Notion databases that every project reads and Claude keeps current.">
-<meta property="og:title" content="Every project reads the same source now">
-<meta property="og:description" content="Moving my Claude projects off static knowledge files and onto Notion databases that Claude keeps current.">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://daynwj.github.io/living-knowledge">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>WoW: Forever — Roster Plan</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --rosso:#E10600;
-    --rosso-deep:#B0050A;
-    --blue:#0033A0;
-    --ink:#14161A;
-    --mute:#5B6066;
-    --line:#E4E6EA;
-    --paper:#FFFFFF;
-    --backdrop:#EEF0F3;
-    color-scheme:light;
+  :root {
+    --red: #C8102E;          /* Ferrari red: PvP ruleset */
+    --blue: #0033A0;         /* Kentucky blue: Normal ruleset */
+    --ink: #16181D;
+    --ink-2: #4A4F5A;
+    --line: #D9DCE3;
+    --page: #FFFFFF;
+    --panel: #F5F6F8;
+    --chip: #E9EBF0;
+    --on-accent: #FFFFFF;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;}
-  body{
-    font-family:'Inter',system-ui,-apple-system,sans-serif;
-    color:var(--ink);
-    background:var(--backdrop);
-    line-height:1.5;
-    padding:30px 16px 60px;
-    -webkit-font-smoothing:antialiased;
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --red: #FF5A6E; --blue: #7FA2FF;
+      --ink: #F1F2F5; --ink-2: #B4B8C2; --line: #343844;
+      --page: #121419; --panel: #1C1F26; --chip: #282C35; --on-accent: #121419;
+    }
   }
-  .page{
-    width:100%;max-width:1000px;margin:0 auto;
-    background:var(--paper);
-    box-shadow:0 24px 60px -28px rgba(20,22,26,.45);
+  :root[data-theme="dark"] {
+    --red: #FF5A6E; --blue: #7FA2FF;
+    --ink: #F1F2F5; --ink-2: #B4B8C2; --line: #343844;
+    --page: #121419; --panel: #1C1F26; --chip: #282C35; --on-accent: #121419;
   }
-  a:focus-visible,button:focus-visible{outline:3px solid var(--rosso);outline-offset:2px;}
+  *, *::before, *::after { box-sizing: inherit; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); background: var(--page); }
+  body {
+    margin: 0; background: var(--page); color: var(--ink);
+    font-family: "Barlow", "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+    font-size: 17px; line-height: 1.55;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 22px; }
+  a { color: var(--blue); }
+  a:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
 
-  .backbar{
-    padding:14px 58px;border-bottom:1px solid var(--line);
-    font-family:'JetBrains Mono',monospace;font-size:12px;
-  }
-  .backbar a{color:var(--blue);text-decoration:none;font-weight:500;}
-  .backbar a:hover{color:var(--rosso-deep);}
+  header { padding: 56px 0 28px; }
+  .kicker { color: var(--ink-2); font-weight: 600; margin: 0 0 8px; }
+  h1 { font-size: clamp(2.4rem, 7vw, 4.2rem); line-height: 1.02; margin: 0 0 14px; font-weight: 800; letter-spacing: -0.02em; }
+  .lede { max-width: 62ch; color: var(--ink-2); font-size: 1.1rem; margin: 0 0 26px; }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px 28px; margin: 0; padding: 0; list-style: none; font-size: 0.95rem; }
+  .facts b { display: block; font-weight: 700; color: var(--ink); }
+  .facts span { color: var(--ink-2); }
 
-  .header{position:relative;padding:52px 58px 42px;border-bottom:1px solid var(--ink);}
-  .header::before{content:"";position:absolute;left:0;top:52px;bottom:42px;width:7px;background:var(--rosso);}
-  .name{
-    font-family:'Space Grotesk',sans-serif;font-weight:700;
-    font-size:44px;letter-spacing:-1.3px;line-height:1;
-  }
-  .name .dot{color:var(--rosso);}
-  .thesis{
-    font-family:'Space Grotesk',sans-serif;font-weight:600;
-    font-size:34px;line-height:1.18;letter-spacing:-.7px;
-    margin-top:26px;max-width:19ch;
-  }
-  .standfirst{
-    font-size:16.5px;line-height:1.64;color:#2b2e33;
-    margin-top:20px;max-width:62ch;
-  }
-  .links{
-    display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:28px;
-    font-family:'JetBrains Mono',monospace;font-size:12px;
-  }
-  .links a{color:var(--mute);text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:2px;}
-  .links a:hover{color:var(--rosso-deep);border-bottom-color:var(--rosso-deep);}
+  .split { display: grid; grid-template-columns: 3fr 1fr; margin: 40px 0 0; border-radius: 6px; overflow: hidden; }
+  .split > div { padding: 16px 20px; color: var(--on-accent); font-weight: 700; }
+  .split .pvp { background: var(--red); }
+  .split .normal { background: var(--blue); }
+  .split small { display: block; font-weight: 500; }
 
-  main{padding:0 58px 58px;}
-  section{padding-top:54px;}
-  section + section{border-top:1px solid var(--line);margin-top:54px;padding-top:54px;}
+  nav.jump { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 0; }
+  nav.jump a { text-decoration: none; background: var(--chip); color: var(--ink); font-weight: 600; font-size: 0.92rem; padding: 6px 12px; border-radius: 999px; }
 
-  .sectlabel{
-    font-family:'JetBrains Mono',monospace;font-size:11px;
-    letter-spacing:.09em;color:var(--rosso-deep);font-weight:700;
-    margin-bottom:16px;
-  }
-  h2{
-    font-family:'Space Grotesk',sans-serif;font-weight:700;
-    font-size:29px;line-height:1.18;letter-spacing:-.6px;
-    max-width:25ch;margin-bottom:20px;
-  }
-  .prose p{font-size:16px;line-height:1.7;color:#2b2e33;max-width:68ch;}
-  .prose p + p{margin-top:15px;}
-  .prose a{color:var(--blue);text-decoration:none;border-bottom:1.5px solid rgba(0,51,160,.3);}
-  .prose a:hover{border-bottom-color:var(--blue);}
+  main section { padding: 48px 0 8px; }
+  h2 { font-size: 1.8rem; margin: 0 0 6px; font-weight: 800; letter-spacing: -0.01em; }
+  .sub { color: var(--ink-2); margin: 0 0 24px; max-width: 66ch; }
 
-  figure{margin:34px 0 0;}
-  figure svg{width:100%;height:auto;display:block;border:1px solid var(--line);}
-  figure + .prose{margin-top:30px;}
+  .camp { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .char { background: var(--panel); border-radius: 6px; padding: 22px 22px 18px; border-top: 6px solid var(--red); }
+  .char.normal { border-top-color: var(--blue); }
+  .char h3 { margin: 0; font-size: 1.35rem; font-weight: 700; line-height: 1.2; }
+  .role { margin: 4px 0 12px; color: var(--ink-2); font-weight: 600; }
+  .char p { margin: 0 0 14px; }
+  dl.kit { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; }
+  dl.kit dt { font-weight: 700; }
+  dl.kit dd { margin: 0; }
 
-  .deep{margin-top:20px;font-size:14.5px;}
-  .deep a{color:var(--blue);font-weight:600;text-decoration:none;border-bottom:1.5px solid rgba(0,51,160,.3);}
-  .deep a:hover{border-bottom-color:var(--blue);}
-  .receipt{
-    margin-top:30px;border-left:5px solid var(--rosso);
-    background:rgba(225,6,0,.05);padding:16px 20px;
-    font-size:15px;line-height:1.6;color:var(--ink);
-    max-width:64ch;
-  }
+  .scroll { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; min-width: 660px; font-size: 0.97rem; }
+  th, td { text-align: left; padding: 11px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-weight: 700; color: var(--ink-2); border-bottom: 2px solid var(--line); }
+  td.rs-pvp { color: var(--red); font-weight: 700; }
+  td.rs-normal { color: var(--blue); font-weight: 700; }
 
-  .close{background:var(--blue);color:#fff;padding:50px 58px 54px;}
-  .close h2{color:#fff;max-width:26ch;}
-  .close p{font-size:16.5px;line-height:1.7;color:rgba(255,255,255,.84);max-width:64ch;}
-  .close p + p{margin-top:15px;}
-  .close a{color:#fff;text-decoration:none;border-bottom:1.5px solid rgba(255,255,255,.45);}
-  .close a:hover{border-bottom-color:#fff;}
-  .nextlinks{margin-top:30px;display:flex;flex-wrap:wrap;gap:12px;}
-  .nextlinks a{
-    display:inline-block;border:1px solid rgba(255,255,255,.35);border-bottom:1px solid rgba(255,255,255,.35);
-    padding:11px 16px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;
-  }
-  .nextlinks a:hover{background:#fff;color:var(--blue);}
+  .note { background: var(--panel); border-radius: 6px; padding: 16px 20px; margin: 20px 0 0; max-width: 80ch; }
+  .note p { margin: 0 0 8px; }
+  .note p:last-child { margin: 0; }
 
-  .foot{
-    padding:26px 58px 30px;border-top:1px solid var(--line);
-    font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--mute);
-    display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
-  }
-  .foot a{color:var(--mute);}
+  .names { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .nameset { border: 1px solid var(--line); border-radius: 6px; padding: 18px 20px; }
+  .nameset h3 { margin: 0 0 2px; font-size: 1.1rem; }
+  .theme { color: var(--ink-2); margin: 0 0 12px; font-size: 0.95rem; }
+  .nameset ul { list-style: none; margin: 0; padding: 0; }
+  .nameset li { padding: 8px 0; border-top: 1px solid var(--line); }
+  .nameset li:first-child { border-top: 0; padding-top: 0; }
+  .nm { font-weight: 700; font-size: 1.08rem; }
+  .why { display: block; color: var(--ink-2); font-size: 0.92rem; }
+  .pick { font-size: 0.78rem; font-weight: 700; color: var(--on-accent); background: var(--ink); padding: 1px 7px; border-radius: 3px; margin-left: 6px; vertical-align: 2px; }
 
-  @media(max-width:680px){
-    body{padding:14px 10px 40px;}
-    .backbar{padding:12px 22px;}
-    .header{padding:34px 22px 28px;}
-    .header::before{top:34px;bottom:28px;width:6px;}
-    .name{font-size:33px;}
-    .thesis{font-size:25px;max-width:none;}
-    main{padding:0 22px 40px;}
-    h2{font-size:23px;}
-    .close{padding:34px 22px 38px;}
-    .foot{padding:22px;}
+  .erik { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  .erik h3 { font-size: 1.1rem; margin: 0 0 8px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips span { background: var(--chip); padding: 4px 10px; border-radius: 999px; font-size: 0.95rem; }
+  .erik ul { margin: 0; padding-left: 1.2em; }
+  .erik li { margin-bottom: 8px; }
+
+  ol.todo { padding-left: 1.3em; max-width: 78ch; margin: 0; }
+  ol.todo li { margin-bottom: 10px; }
+
+  footer { border-top: 1px solid var(--line); margin-top: 48px; padding: 24px 0 48px; color: var(--ink-2); font-size: 0.93rem; }
+  footer p { max-width: 80ch; margin: 0 0 8px; }
+
+  @media (max-width: 760px) {
+    body { font-size: 16px; }
+    header { padding-top: 36px; }
+    .split, .camp, .names, .erik { grid-template-columns: 1fr; }
+    dl.kit { grid-template-columns: 1fr; gap: 2px; }
+    dl.kit dd { margin-bottom: 8px; }
   }
 </style>
 </head>
 <body>
-<div class="page">
+<div class="wrap">
+<header>
+  <p class="kicker">Video Games Second Brain · character roster plan</p>
+  <h1>World of Warcraft: Forever</h1>
+  <p class="lede">Four characters, two rulesets. Two Trolls and two Skyborne, built for ranged control, something else on the field, and solo sessions that stand on their own, with group nights as the bonus.</p>
+  <ul class="facts">
+    <li><b>Launch</b><span>Nov 4, 2026, 3:00 pm PST</span></li>
+    <li><b>Name reservation</b><span>Oct 27 – Nov 3 (3 characters)</span></li>
+    <li><b>Owned</b><span>Skyborne Heroic Pack</span></li>
+    <li><b>Client</b><span>MSI Sword · MacBook backup · Legion Go test</span></li>
+  </ul>
+  <div class="split" aria-label="Ruleset split">
+    <div class="pvp">PvP ruleset, Horde<small>Warlock · Shaman · Mage</small></div>
+    <div class="normal">Normal, Horde<small>Druid</small></div>
+  </div>
+  <nav class="jump" aria-label="Jump to section">
+    <a href="#roster">Roster</a><a href="#professions">Professions &amp; camp</a><a href="#names">Names</a><a href="#erik">Erik</a><a href="#dates">Dates</a>
+  </nav>
+</header>
 
-  <div class="backbar"><a href="https://daynwj.github.io/ai">← Back to AI practice</a></div>
+<main>
+<section id="roster">
+  <h2>The roster</h2>
+  <p class="sub">The Warlock is the focus. The Shaman comes out when Erik's online, the Mage fills in when a group needs one, and the Druid lives on its own ruleset with Julie's group.</p>
+  <div class="camp">
+    <article class="char">
+      <h3>Troll Affliction Warlock</h3>
+      <p class="role">Main · solo first · PvP ruleset</p>
+      <p>DoTs, drains and Life Tap carry a 45-minute solo session with little downtime, and the Voidwalker holds a second body on the field. No gathering, so no stopping at contested nodes.</p>
+      <dl class="kit">
+        <dt>Look</dt><dd>Female Troll. Vampire sorceress with a silly streak, small fangs.</dd>
+        <dt>Professions</dt><dd>Tailoring + Enchanting</dd>
+        <dt>Pet</dt><dd>Voidwalker</dd>
+        <dt>Key talents</dt><dd>Improved Corruption, Improved Life Tap, Siphon Life; toward 60, Nightfall and the Wrack capstone</dd>
+      </dl>
+    </article>
 
-  <header class="header">
-    <div class="name">Dayn Johnson<span class="dot">.</span></div>
-    <h1 class="thesis">Every project reads the same source now.</h1>
-    <p class="standfirst">Until this summer, each of my Claude projects kept its own copy of what it knew. Now they all read from one set of Notion databases, and Claude keeps those databases current so I don't have to.</p>
-    <div class="links">
-      <a href="https://daynwj.github.io/ai">AI practice</a>
-      <a href="https://daynwj.github.io/resume">Resume</a>
-      <a href="https://linkedin.com/in/daynjohnson">LinkedIn</a>
-      <a href="mailto:daynwj@gmail.com">daynwj@gmail.com</a>
+    <article class="char">
+      <h3>Skyborne Elemental Shaman</h3>
+      <p class="role">Duo alt · with Erik's Bear · PvP ruleset</p>
+      <p>A ranged caster with totems on the field, off-heals when the Bear takes a beating, and Ghost Wolf to get out. Doesn't compete with Erik for gear.</p>
+      <dl class="kit">
+        <dt>Look</dt><dd>Male Skyborne (Windshaper). Norse thunder god, Wheel of Time.</dd>
+        <dt>Professions</dt><dd>Herbalism + Alchemy</dd>
+        <dt>Travel</dt><dd>Ghost Wolf, usable indoors with Improved Ghost Wolf</dd>
+        <dt>Key talents</dt><dd>Lava Burst, Lightning Overload; Resto later for Riptide and Chain Heal</dd>
+      </dl>
+    </article>
+
+    <article class="char">
+      <h3>Troll Frost Mage</h3>
+      <p class="role">Bank alt · group flex · PvP ruleset</p>
+      <p>Parked at the auction house from day one. Steps in when a group needs a Mage instead of the Warlock, for dungeons, raids, questing and battlegrounds. Geared by the Warlock's robes and enchants and the Shaman's mana potions.</p>
+      <dl class="kit">
+        <dt>Look</dt><dd>Female Troll. Norse, Final Fantasy and Tolkien frost sorceress.</dd>
+        <dt>Professions</dt><dd>Mining + Engineering</dd>
+        <dt>Brings</dt><dd>Repair Bot and Reagent Bot at camp</dd>
+        <dt>Key talents</dt><dd>Ice Lance, Frostbite, Shatter, Fingers of Frost, Improved Blizzard</dd>
+      </dl>
+    </article>
+
+    <article class="char normal">
+      <h3>Skyborne Druid</h3>
+      <p class="role">Self-sufficient · with Julie's group · Normal ruleset</p>
+      <p>Skins what it kills and makes its own armor. Separate economy from the PvP side, so it stands entirely on its own. Spec as it goes; Feral is the fun one.</p>
+      <dl class="kit">
+        <dt>Look</dt><dd>Male Skyborne (Windshaper). Tolkien-style star-walker.</dd>
+        <dt>Professions</dt><dd>Skinning + Leatherworking</dd>
+        <dt>World PvP</dt><dd>Opt-in: you flag yourself manually on Normal</dd>
+      </dl>
+    </article>
+  </div>
+</section>
+
+<section id="professions">
+  <h2>Professions &amp; camp</h2>
+  <p class="sub">Every character also takes Cooking, First Aid and Fishing. Each profession adds an object to a group campsite; these are the ones this roster brings.</p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Character</th><th>Ruleset</th><th>Professions</th><th>Makes</th><th>Camp object</th></tr></thead>
+      <tbody>
+        <tr><td>Warlock</td><td class="rs-pvp">PvP</td><td>Tailoring + Enchanting</td><td>Robes, bags, enchants</td><td>Faction Banner (Spirit) at skill 20</td></tr>
+        <tr><td>Shaman</td><td class="rs-pvp">PvP</td><td>Herbalism + Alchemy</td><td>Mana potions, elixirs, flasks</td><td>Incense Candle (Intellect) at 20; Alchemy Lab from a dungeon Blueprint</td></tr>
+        <tr><td>Mage</td><td class="rs-pvp">PvP</td><td>Mining + Engineering</td><td>Gadgets, bombs, tools</td><td>Reagent Bot at 20, Repair Bot at 140, Anarchist's Workbench at 300</td></tr>
+        <tr><td>Druid</td><td class="rs-normal">Normal</td><td>Skinning + Leatherworking</td><td>Its own armor, armor kits</td><td>Camp Tent (rested XP) at 20</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="note">
+    <p><b>Camp rules:</b> a Basic Campfire holds three objects, one per player; Cooking upgrades it to five, then ten. Camp buffs don't stack with the class buff they copy, so skip the Incense Candle when a Mage has Arcane Intellect up.</p>
+    <p><b>Healing potions</b> moved from Alchemy to First Aid, so everyone makes their own.</p>
+  </div>
+</section>
+
+<section id="names">
+  <h2>Names</h2>
+  <p class="sub">Forever names come in two parts, a Main Name and a Secondary Name. Only the full pair has to be unique in the region, so a taken first name just needs a different second one.</p>
+  <div class="names">
+    <div class="nameset">
+      <h3 style="color:var(--red)">Warlock</h3>
+      <p class="theme">Vampire sorceress, with a silly streak</p>
+      <ul>
+        <li><span class="nm">Vespira Nibblefang</span><span class="pick">Pick</span><span class="why">Evening-star sorceress with the small fangs you like</span></li>
+        <li><span class="nm">Carmilla Nightsip</span><span class="why">Carmilla is the 1872 vampire novella; Nightsip is the joke</span></li>
+        <li><span class="nm">Vesper Vayne</span><span class="why">The straight, serious option</span></li>
+      </ul>
     </div>
-  </header>
-
-  <main>
-
-    <section>
-      <div class="sectlabel">Before</div>
-      <h2>Every project had its own copy, and the copies disagreed.</h2>
-      <div class="prose">
-        <p>Each Claude project had its own knowledge files: markdown I wrote, uploaded, and was supposed to keep current. The same fact lived in three or four places. When something changed, I had to remember every project that knew it, and I usually didn't. One project would know something different about a topic than the next one, and each answered confidently from whatever version it had.</p>
-        <p>Putting those facts in my personal preferences wasn't the answer either. Preferences load on every message, in every project, so anything in there gets applied where nobody asked for it (the same cast-iron-and-Destiny problem from my Gemini days, told on <a href="https://daynwj.github.io/ai">my AI practice page</a>).</p>
-        <p>I'd also been here before with Notion itself. I used it years ago and spent hours building and maintaining databases by hand. Then I stopped, and all of it went stale. I still have pages of it to clear out.</p>
-      </div>
-
-      <figure><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 500" width="1000" height="500" font-family="Inter, system-ui, -apple-system, sans-serif" role="img" aria-label="Before: four projects each holding their own out-of-sync copy of the same facts. Now: four projects reading from and writing to one Notion source.">
-  <rect width="1000" height="500" fill="#FFFFFF"/>
-  <line x1="500" y1="40" x2="500" y2="460" stroke="#E4E6EA" stroke-width="1.5"/>
-
-  <text x="60" y="62" font-size="11" font-weight="700" fill="#5B6066" letter-spacing="0.6">BEFORE</text>
-  <text x="60" y="88" font-size="17" font-weight="700" fill="#14161A">Every project kept its own copy</text>
-
-  <g>
-    <rect x="60" y="120" width="180" height="120" fill="#FFFFFF" stroke="#14161A" stroke-width="1.2"/>
-    <text x="78" y="150" font-size="14" font-weight="700" fill="#14161A">Career</text>
-    <rect x="78" y="166" width="144" height="54" fill="#F4F5F7" stroke="#E4E6EA"/>
-    <text x="90" y="189" font-size="12" fill="#5B6066">Knowledge files</text>
-    <text x="90" y="208" font-size="12" font-weight="600" fill="#B0050A">updated in May</text>
-
-    <rect x="270" y="120" width="180" height="120" fill="#FFFFFF" stroke="#14161A" stroke-width="1.2"/>
-    <text x="288" y="150" font-size="14" font-weight="700" fill="#14161A">Household</text>
-    <rect x="288" y="166" width="144" height="54" fill="#F4F5F7" stroke="#E4E6EA"/>
-    <text x="300" y="189" font-size="12" fill="#5B6066">Knowledge files</text>
-    <text x="300" y="208" font-size="12" font-weight="600" fill="#B0050A">updated in July</text>
-
-    <rect x="60" y="264" width="180" height="120" fill="#FFFFFF" stroke="#14161A" stroke-width="1.2"/>
-    <text x="78" y="294" font-size="14" font-weight="700" fill="#14161A">Kitchen</text>
-    <rect x="78" y="310" width="144" height="54" fill="#F4F5F7" stroke="#E4E6EA"/>
-    <text x="90" y="333" font-size="12" fill="#5B6066">Knowledge files</text>
-    <text x="90" y="352" font-size="12" font-weight="600" fill="#B0050A">never updated</text>
-
-    <rect x="270" y="264" width="180" height="120" fill="#FFFFFF" stroke="#14161A" stroke-width="1.2"/>
-    <text x="288" y="294" font-size="14" font-weight="700" fill="#14161A">Hobbies</text>
-    <rect x="288" y="310" width="144" height="54" fill="#F4F5F7" stroke="#E4E6EA"/>
-    <text x="300" y="333" font-size="12" fill="#5B6066">Knowledge files</text>
-    <text x="300" y="352" font-size="12" font-weight="600" fill="#B0050A">updated in June</text>
-  </g>
-  <text x="60" y="424" font-size="12.4" fill="#5B6066">
-    <tspan x="60" dy="0">The same facts in four places. I updated each</tspan>
-    <tspan x="60" dy="19">copy by hand, when I remembered.</tspan>
-  </text>
-
-  <text x="550" y="62" font-size="11" font-weight="700" fill="#E10600" letter-spacing="0.6">NOW</text>
-  <text x="550" y="88" font-size="17" font-weight="700" fill="#14161A">One source, read and written by Claude</text>
-
-  <rect x="660" y="210" width="200" height="84" fill="#E10600"/>
-  <text x="760" y="245" text-anchor="middle" font-size="16" font-weight="700" fill="#FFFFFF">Notion</text>
-  <text x="760" y="268" text-anchor="middle" font-size="12" fill="#FFFFFF">Hubs and databases</text>
-
-  <g font-size="13" font-weight="700" fill="#FFFFFF">
-    <rect x="550" y="120" width="140" height="44" fill="#0033A0"/>
-    <text x="620" y="147" text-anchor="middle">Career</text>
-    <rect x="830" y="120" width="140" height="44" fill="#0033A0"/>
-    <text x="900" y="147" text-anchor="middle">Household</text>
-    <rect x="550" y="340" width="140" height="44" fill="#0033A0"/>
-    <text x="620" y="367" text-anchor="middle">Kitchen</text>
-    <rect x="830" y="340" width="140" height="44" fill="#0033A0"/>
-    <text x="900" y="367" text-anchor="middle">Hobbies</text>
-  </g>
-  <g stroke="#14161A" stroke-width="1.4" fill="none">
-    <line x1="640" y1="166" x2="700" y2="206"/>
-    <line x1="880" y1="166" x2="820" y2="206"/>
-    <line x1="640" y1="338" x2="700" y2="298"/>
-    <line x1="880" y1="338" x2="820" y2="298"/>
-  </g>
-  <g fill="#14161A">
-    <circle cx="640" cy="166" r="3"/><circle cx="700" cy="206" r="3"/>
-    <circle cx="880" cy="166" r="3"/><circle cx="820" cy="206" r="3"/>
-    <circle cx="640" cy="338" r="3"/><circle cx="700" cy="298" r="3"/>
-    <circle cx="880" cy="338" r="3"/><circle cx="820" cy="298" r="3"/>
-  </g>
-  <text x="550" y="424" font-size="12.4" fill="#5B6066">
-    <tspan x="550" dy="0">Every project reads the same rows. When something</tspan>
-    <tspan x="550" dy="19">changes, Claude updates the row once.</tspan>
-  </text>
-</svg></figure>
-    </section>
-
-    <section>
-      <div class="sectlabel">What changed</div>
-      <h2>Claude writes to Notion. I don't.</h2>
-      <div class="prose">
-        <p>In late July and early August 2026, I stood up a new project knowing I didn't want to keep updating markdown files in it. So instead of attaching knowledge files, I had Claude design databases in Notion and point the project at them. Then I did the same for the next project, and the one after that.</p>
-        <p>What makes it work is that I'm not the one maintaining it. When something changes, I say so in conversation and Claude updates the row. Claude reads from it, builds a new database when a project needs one, and marks a page as history when its job is done instead of deleting it. The rules for how it writes live on the hub pages themselves: check for a duplicate before creating a row, update a row instead of adding a second one, and tag the person instead of typing their name.</p>
-        <p>Because Claude designed the databases, they're related in ways I never bothered to build by hand. People is the spine. Trips, celebrations, activities, and more all tag against it, so a person flows through everything connected to them, and Claude can follow that thread across all of it.</p>
-        <p>Recipes were the proof. They used to live in a separate app, with a Gemini gem that forgot every good dish the moment the chat ended. Now they're a Notion database. My Digital Sous Chef project pulls from it, and when we build a new recipe together and I like it, I ask and it goes into the library as a new recipe. I don't lift a finger.</p>
-      </div>
-      <p class="deep"><a href="https://daynwj.github.io/design-time-logic">How my meal-planning system moved everything out of the instructions →</a></p>
-    </section>
-
-    <section>
-      <div class="sectlabel">The map</div>
-      <h2>What's in it, and how it connects.</h2>
-      <div class="prose">
-        <p>Two hubs, a manifest, and the databases hanging off them. This is the version I'm comfortable showing. The parts that hold money, health, and my kids' day-to-day stay off this page.</p>
-      </div>
-
-      <figure><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" width="1000" height="600" font-family="Inter, system-ui, -apple-system, sans-serif" role="img" aria-label="Map of the living knowledge system: me and Claude at the center, connected to the manifest, the household hub, the kitchen, the private hub, hobbies, and what writes back.">
-  <rect width="1000" height="600" fill="#FFFFFF"/>
-
-  <g stroke="#9AA1AA" stroke-width="1.4" fill="none">
-    <line x1="400" y1="270" x2="320" y2="130"/>
-    <line x1="400" y1="290" x2="320" y2="290"/>
-    <line x1="400" y1="310" x2="320" y2="450"/>
-    <line x1="600" y1="270" x2="680" y2="130"/>
-    <line x1="600" y1="290" x2="680" y2="290"/>
-    <line x1="600" y1="310" x2="680" y2="450"/>
-  </g>
-
-  <rect x="400" y="230" width="200" height="120" fill="#E10600"/>
-  <text x="500" y="276" text-anchor="middle" font-size="18" font-weight="700" fill="#FFFFFF">Me and Claude</text>
-  <text x="500" y="302" text-anchor="middle" font-size="12.4" fill="#FFFFFF">One living source</text>
-  <text x="500" y="321" text-anchor="middle" font-size="12.4" fill="#FFFFFF">every project reads</text>
-
-  <g>
-    <rect x="60" y="70" width="260" height="120" fill="#EEF2FA" stroke="#0033A0" stroke-width="1.2"/>
-    <text x="80" y="100" font-size="15" font-weight="700" fill="#0033A0">The manifest</text>
-    <text x="80" y="126" font-size="12.4" fill="#2b2e33">Every project and skill</text>
-    <text x="80" y="148" font-size="12.4" fill="#2b2e33">Ideas not yet built</text>
-    <text x="80" y="170" font-size="12.4" fill="#2b2e33">Where each page lives</text>
-
-    <rect x="60" y="230" width="260" height="120" fill="#EEF2FA" stroke="#0033A0" stroke-width="1.2"/>
-    <text x="80" y="260" font-size="15" font-weight="700" fill="#0033A0">Household hub</text>
-    <text x="80" y="286" font-size="12.4" fill="#2b2e33">People, the spine</text>
-    <text x="80" y="308" font-size="12.4" fill="#2b2e33">Trips, activities, celebrations</text>
-    <text x="80" y="330" font-size="12.4" fill="#2b2e33">Home and subscriptions</text>
-
-    <rect x="60" y="390" width="260" height="120" fill="#EEF2FA" stroke="#0033A0" stroke-width="1.2"/>
-    <text x="80" y="420" font-size="15" font-weight="700" fill="#0033A0">Kitchen</text>
-    <text x="80" y="446" font-size="12.4" fill="#2b2e33">Recipes and cook log</text>
-    <text x="80" y="468" font-size="12.4" fill="#2b2e33">Pantry and food profile</text>
-    <text x="80" y="490" font-size="12.4" fill="#2b2e33">Kitchen reference</text>
-
-    <rect x="680" y="70" width="260" height="120" fill="#FFF3F2" stroke="#E10600" stroke-width="1.6"/>
-    <text x="700" y="100" font-size="15" font-weight="700" fill="#B0050A">Private hub</text>
-    <text x="700" y="126" font-size="12.4" fill="#2b2e33">Professional record</text>
-    <text x="700" y="148" font-size="12.4" fill="#2b2e33">AI enablement playbook</text>
-    <text x="700" y="170" font-size="12.4" fill="#2b2e33">Accuracy guardrails</text>
-
-    <rect x="680" y="230" width="260" height="120" fill="#EEF2FA" stroke="#0033A0" stroke-width="1.2"/>
-    <text x="700" y="260" font-size="15" font-weight="700" fill="#0033A0">Hobbies</text>
-    <text x="700" y="286" font-size="12.4" fill="#2b2e33">Card and tabletop games</text>
-    <text x="700" y="308" font-size="12.4" fill="#2b2e33">Video game builds</text>
-    <text x="700" y="330" font-size="12.4" fill="#2b2e33">Rules references</text>
-
-    <rect x="680" y="390" width="260" height="120" fill="#EEF2FA" stroke="#0033A0" stroke-width="1.2"/>
-    <text x="700" y="420" font-size="15" font-weight="700" fill="#0033A0">What writes back</text>
-    <text x="700" y="446" font-size="12.4" fill="#2b2e33">School updates, by a skill</text>
-    <text x="700" y="468" font-size="12.4" fill="#2b2e33">Recipes, when I ask</text>
-    <text x="700" y="490" font-size="12.4" fill="#2b2e33">A duplicate check first</text>
-  </g>
-
-  <rect x="60" y="548" width="14" height="14" fill="#EEF2FA" stroke="#0033A0" stroke-width="1.2"/>
-  <text x="84" y="560" font-size="12" fill="#5B6066">Shared with the household</text>
-  <rect x="290" y="548" width="14" height="14" fill="#FFF3F2" stroke="#E10600" stroke-width="1.6"/>
-  <text x="314" y="560" font-size="12" fill="#5B6066">Private to me</text>
-</svg></figure>
-
-      <div class="prose">
-        <p>The manifest is the part most people would skip. It's one database listing every Claude project and skill I run, what each one owns, and which Notion pages it reads, with a separate queue for ideas that haven't been built yet. When I need to know whether something exists, I ask the manifest instead of my memory.</p>
-        <p>One source still drifts if nobody checks it. While I was building this page, Claude read the household hub and found it still describing Digital Sous Chef as an idea that hadn't been built, while the manifest had it as active. It took one edit in one place to fix. Before, I'd have had to hunt down every project that believed the old version.</p>
-      </div>
-    </section>
-
-    <section>
-      <div class="sectlabel">Permissioning</div>
-      <h2>Two hubs, because not every project should read everything.</h2>
-      <div class="prose">
-        <p>The first version was one shared hub. It holds household logistics – schedules, trips, subscriptions, celebrations – and my wife and I share it, along with every household project. Then I started putting career material in Notion, and some of it had no business sitting where every household project could read it. So there's a second, private hub for professional work and anything else that's mine alone.</p>
-        <p>The honest limit is written on the private hub itself. The Notion connector reads whatever my account can see, with no per-project scoping. Putting a page on the private hub keeps it away from other people, and it does nothing to keep it away from other Claude projects. Anything that truly can't be read everywhere needs real Notion permissions, not a different parent page.</p>
-        <p>It's the same lesson as the permissioning work on <a href="https://daynwj.github.io/ai">my AI practice page</a>: what the tool can reach decides what you can build, so find that out before you design around it.</p>
-      </div>
-    </section>
-
-    <section>
-      <div class="sectlabel">The same pattern at work</div>
-      <h2>At Henry Schein One, the same idea runs on SharePoint.</h2>
-      <div class="prose">
-        <p>I pitched Notion as the CS Ops knowledge system and lost, so I built it in SharePoint with licenses the org already had. The SOPs sat in an Excel list that only premium Copilot users could search, inside an ungoverned document library. I restructured the CS SharePoint site into governed libraries (enablement guides, infographics, and Office files in one, team call recordings in another) plus a list of external-facing product links, and kept the structure flat with heavy metadata.</p>
-        <p>The agent on top of it is grounded only in those sources. A CSM asks Copilot a question and gets leadership-approved steps with a link to the source document, or a content request form when no SOP exists yet. It can't see account data, so CSMs paste that in by hand, and that part still feels half rolled out.</p>
-        <p>The two builds teach each other. What I learn at home about keeping one source current shows up at work, and what work forces on me – governance, permissions, a form for the gaps – comes back home.</p>
-      </div>
-    </section>
-
-  </main>
-
-  <div class="close">
-    <h2>What this gives me back.</h2>
-    <p>This week I listened to an episode of <a href="https://podcasts.apple.com/us/podcast/un-churned-the-no-1-podcast-for-customer-retention/id1635997357?i=1000791305799">Unchurned</a>, with Josh Schachter at Notion's New York office talking to Christina Parra, Ariel Risman, and Kellie Woodin from Notion's Outcomes Architects team. It described what I've been building this summer almost step for step.</p>
-    <p>Christina walked through the maturity model they use with customers: AI as a thought partner, then a personal assistant working from your context, then a teammate, and finally AI as the system. She also talked about using Notion to handle the administrative load at home so she can be more present with her family.</p>
-    <p>That's the arc on my AI practice page, and this knowledge base is how I got from the third step to the fourth. Claude took over the admin work of keeping it all straight. I keep the judgment, and I get more time with my family.</p>
-    <div class="nextlinks">
-      <a href="https://daynwj.github.io/ai">AI practice</a>
-      <a href="https://daynwj.github.io/design-time-logic">Digital Sous Chef</a>
-      <a href="https://daynwj.github.io/resume">Resume</a>
+    <div class="nameset">
+      <h3 style="color:var(--red)">Mage</h3>
+      <p class="theme">Norse, Final Fantasy and Tolkien frost</p>
+      <ul>
+        <li><span class="nm">Sigrun Rimeheart</span><span class="pick">Pick</span><span class="why">Sigrun, "victory rune," a valkyrie name; rime is frost</span></li>
+        <li><span class="nm">Ylva Frostmere</span><span class="why">Ylva is Swedish for "she-wolf"</span></li>
+        <li><span class="nm">Seren Rimeveil</span><span class="why">Seren is Welsh for "star"</span></li>
+      </ul>
+    </div>
+    <div class="nameset">
+      <h3 style="color:var(--red)">Shaman</h3>
+      <p class="theme">Thunder god, Wheel of Time, Swedish and Danish</p>
+      <ul>
+        <li><span class="nm">Torsten Askeld</span><span class="pick">Pick</span><span class="why">Torsten, "Thor's stone," common in Sweden and Denmark; Askeld from the Swedish for thunder</span></li>
+        <li><span class="nm">Haldor Skyrend</span><span class="why">Haldor, "Thor's rock," in Old Norse</span></li>
+        <li><span class="nm">Cirrus Stormwake</span><span class="why">Cloud and storm, no Norse needed</span></li>
+      </ul>
+    </div>
+    <div class="nameset">
+      <h3 style="color:var(--blue)">Druid</h3>
+      <p class="theme">Tolkien-style star-walker</p>
+      <ul>
+        <li><span class="nm">Elenion Starstride</span><span class="pick">Pick</span><span class="why">Elen is "star" in Tolkien's Elvish; Starstride is a quieter Skywalker</span></li>
+        <li><span class="nm">Caelum Starstride</span><span class="why">Latin for "sky"</span></li>
+        <li><span class="nm">Stargazy Pie</span><span class="why">The silly option: a real English dish, and it pairs with Erik's food names</span></li>
+      </ul>
     </div>
   </div>
-
-  <div class="foot">
-    <span>Dayn Johnson · Charlotte, NC</span>
-    <span><a href="https://daynwj.github.io/resume">Resume</a> · <a href="https://linkedin.com/in/daynjohnson">LinkedIn</a> · <a href="mailto:daynwj@gmail.com">daynwj@gmail.com</a></span>
+  <div class="note">
+    <p><b>Reservation covers three characters, and there are four.</b> Suggested: reserve the Warlock, Shaman and Druid; create the Mage at launch. Swap if one of the Mage names matters more.</p>
+    <p>Keep a backup Secondary Name for each. The name filter reads both parts together, and names that break the Code of Conduct got forced renames in beta.</p>
   </div>
+</section>
 
+<section id="erik">
+  <h2>Erik</h2>
+  <p class="sub">Feral Bear tank on the PvP ruleset, with Skinning and Leatherworking.</p>
+  <div class="erik">
+    <div>
+      <h3>His name list</h3>
+      <p class="theme">Ironic</p>
+      <div class="chips"><span>Shift Happens</span><span>Stephen Colbear</span><span>Pawblo Escobear</span></div>
+      <p class="theme" style="margin-top:14px">Food</p>
+      <div class="chips"><span>Tater Tot</span><span>Cotton Candy</span><span>Blue Cheese</span><span>Junior Mint</span><span>Mint Chip</span><span>Slim Jim</span><span>Fish Sticks</span><span>Pumpkin Pie</span><span>Banana Bread</span><span>Tootsie Pop</span><span>Bean Burrito</span></div>
+    </div>
+    <div>
+      <h3>How the roster pairs with him</h3>
+      <ul>
+        <li><b>Shaman:</b> totems and off-heals cover what a Bear can't, from range. Intellect gear vs his Agility and Stamina, so no fights over drops.</li>
+        <li><b>Warlock:</b> Fear and Banish add crowd control. Turn off the Voidwalker's taunt first.</li>
+        <li><b>Mage:</b> the Repair Bot keeps a long session going without a trip to town.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="dates">
+  <h2>Dates</h2>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Date</th><th>What</th><th>Do</th></tr></thead>
+      <tbody>
+        <tr><td>~Oct 1</td><td>Beta cap rises to 30 (estimated)</td><td>Try the Shaman and Mage past 20. Beta progress wipes.</td></tr>
+        <tr><td>Oct 27 – Nov 3</td><td>Early name reservation</td><td>Create three characters with names, race and ruleset locked in.</td></tr>
+        <tr><td>Nov 4, 3:00 pm PST</td><td>Launch</td><td>Create the fourth character. Park the Mage at the auction house and the Shaman and Druid at an inn. Level the Warlock.</td></tr>
+        <tr><td>Dec 9</td><td>First raids open</td><td>Only matters if a raid group forms.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="todo">
+  <h2>Before Oct 27</h2>
+  <ol class="todo">
+    <li>Pick a name and a backup Secondary Name for each character.</li>
+    <li>Decide which three to reserve.</li>
+  </ol>
+</section>
+</main>
+
+<footer>
+  <p>Built from the Video Games Second Brain Notion workspace. Talent and profession details reflect the beta as of late September 2026 and can change before launch.</p>
+</footer>
 </div>
 </body>
 </html>
